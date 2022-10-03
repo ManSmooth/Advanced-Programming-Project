@@ -1,0 +1,80 @@
+.jfx-decorator > * {
+    -fx-background-color: #161d25;
+    -fx-border-color: #161d25;
+}
+
+.jfx-decorator .jfx-decorator-buttons-container > .button {
+    -fx-background-color: #3f4266;
+}
+
+.container {
+    -fx-background-color: #3f4266;
+}
+
+.button {
+    -fx-text-fill: white;
+    -fx-background-color: #1B2430;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-text-fill: white;
+    -fx-background-color: #1B2430;
+}
+
+.combo-box {
+    -fx-text-fill: white;
+    -fx-background-color: #1B2430;
+}
+
+.combo-box .list-view {
+    -fx-background-color: #1B2430;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #1B2430;
+}
+
+.combo-box .list-cell:hover{
+    -fx-background-color: #3f4266;
+}
+
+.check-box > .box{
+    -fx-background-color: #1B2430;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.fcontainer > .list-view {
+    -fx-background-color: #1B2430;
+}
+
+.fcontainer .list-cell {
+    -fx-text-fill: white;
+}
+
+.fcontainer .list-cell:even {
+    -fx-background-color: #212f42;
+}
+
+.fcontainer .list-cell:odd {
+    -fx-background-color: #1B2430;
+}
+
+.fcontainer .list-cell:selected {
+    -fx-background-color: #816797;
+}
+
+.container .progress-bar {
+    -fx-background-color: #1B2430;
+}
+
+.hcontainer {
+    -fx-background-color: #1B2430;
+}

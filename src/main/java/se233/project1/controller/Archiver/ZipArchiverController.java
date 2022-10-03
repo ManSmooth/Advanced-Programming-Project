@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.io.IOException;
 
 public class ZipArchiverController {
-    public static void zipWithInfo(FileWrapper target, HashMap<String, Object> info) {
+    public static void zipWithInfo(FileWrapper target, HashMap<String, Object> info) throws IOException {
         ZipParameters zp = new ZipParameters();
         zp.setCompressionMethod(CompressionMethod.DEFLATE);
         zp.setCompressionLevel((CompressionLevel) info.get("compression"));
@@ -24,36 +24,24 @@ public class ZipArchiverController {
             zp.setEncryptionMethod(EncryptionMethod.AES);
             zp.setAesKeyStrength(AesKeyStrength.KEY_STRENGTH_256);
         }
-        ArchiveController.time();
-        try {
-            ZipFile zf = new ZipFile(target.getFile(), ((String) info.get("password")).toCharArray());
-            ArrayList<FileWrapper> fileList = MainController.getFilesList();
-            ArchiveController.setTotalFiles(fileList.size());
-            for (FileWrapper fileWrapper : fileList) {
-                ArchiveController.setProgress(fileWrapper.getName());
-                if (fileWrapper.getFile().isFile())
-                    zf.addFile(fileWrapper.getFile(), zp);
-                else
-                    zf.addFolder(fileWrapper.getFile(), zp);
-                ArchiveController.progress();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        ZipFile zf = new ZipFile(target.getFile(), ((String) info.get("password")).toCharArray());
+        ArrayList<FileWrapper> fileList = MainController.getFilesList();
+        ArchiveController.setTotalFiles(fileList.size());
+        for (FileWrapper fileWrapper : fileList) {
+            ArchiveController.setProgress(fileWrapper.getName());
+            if (fileWrapper.getFile().isFile())
+                zf.addFile(fileWrapper.getFile(), zp);
+            else
+                zf.addFolder(fileWrapper.getFile(), zp);
+            ArchiveController.progress();
         }
-        ArchiveController.time();
     }
 
-    public static void unzip(FileWrapper source, FileWrapper target) {
-        try {
-            ZipFile zipFile = new ZipFile(source.getFile());
-            if (zipFile.isEncrypted()) {
-                zipFile.setPassword(MainController.showPasswordPane(source).toCharArray());
-            }
-            zipFile.extractAll(target.getPath());
-        } catch (ZipException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
+    public static void unzip(FileWrapper source, FileWrapper target) throws ZipException {
+        ZipFile zipFile = new ZipFile(source.getFile());
+        if (zipFile.isEncrypted()) {
+            zipFile.setPassword(MainController.showPasswordPane(source).toCharArray());
         }
-
+        zipFile.extractAll(target.getPath());
     }
 }

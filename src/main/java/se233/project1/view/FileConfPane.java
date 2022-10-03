@@ -24,6 +24,7 @@ public class FileConfPane extends GridPane {
 
     public void start() {
         VBox container = new VBox();
+        container.getStyleClass().add("fcontainer");
         fileView.getItems().addAll(MainController.getFilesList());
         fileView.setOnKeyPressed(arg0 -> {
             if (arg0.getCode() == KeyCode.DELETE) {

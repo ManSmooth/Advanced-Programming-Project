@@ -17,6 +17,7 @@ public class ProgressScene extends GridPane {
     }
 
     private void start() {
+        this.getStyleClass().add("containter");
         this.setAlignment(Pos.CENTER);
         refresh();
     }

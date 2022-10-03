@@ -21,6 +21,7 @@ public class DragDropBox extends VBox {
         Image img = new Image(Launcher.class.getResourceAsStream("assets/drop.png"));
         ImageView icon = new ImageView(img);
         Label label = new Label("Drag files(s) here");
+        label.getStyleClass().remove("label");
         label.setFont(PlatformFont.getFont("Roboto-Medium", 24));
         label.setOpacity(0.5);
         icon.setOpacity(0.5);

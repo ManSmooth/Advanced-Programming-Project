@@ -9,26 +9,48 @@ import se233.project1.model.FileWrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ForkJoinPool;
+
+import org.bouncycastle.openpgp.PGPException;
+
+import com.github.junrar.exception.RarException;
+
 import java.io.File;
+import java.io.IOException;
 
 public class ArchiveMaster {
     private static ForkJoinPool pool = ForkJoinPool.commonPool();
 
     // Delegate Methods
     public static void zip(FileWrapper target, HashMap<String, Object> info) {
-        ZipArchiverController.zipWithInfo(target, info);
+        try {
+            ZipArchiverController.zipWithInfo(target, info);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void sevenZ(FileWrapper target, HashMap<String, Object> info) {
-        SevenZArchiverController.sevenZWithInfo(target, info);
+        try {
+            SevenZArchiverController.sevenZWithInfo(target, info);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void tar(FileWrapper target, HashMap<String, Object> info) {
-        TarArchiverController.tarWithInfo(target, info);
+        try {
+            TarArchiverController.tarWithInfo(target, info);
+        } catch (IOException | PGPException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void rar(FileWrapper target, HashMap<String, Object> info) {
-        RarArchiverController.rarWithInfo(target, info);
+        try {
+            RarArchiverController.rarWithInfo(target, info);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void unzip(FileWrapper source, FileWrapper target) {
@@ -36,8 +58,13 @@ public class ArchiveMaster {
             @Override
             public void run() {
                 ArchiveController.setProgress(source.getName());
-                ZipArchiverController.unzip(source, target);
-                ArchiveController.progress();
+                try {
+                    ZipArchiverController.unzip(source, target);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    ArchiveController.progress();
+                }
             }
         });
     }
@@ -47,8 +74,13 @@ public class ArchiveMaster {
             @Override
             public void run() {
                 ArchiveController.setProgress(source.getName());
-                SevenZArchiverController.unsevenZ(source, target);
-                ArchiveController.progress();
+                try {
+                    SevenZArchiverController.unsevenZ(source, target);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    ArchiveController.progress();
+                }
             }
         });
     }
@@ -58,8 +90,13 @@ public class ArchiveMaster {
             @Override
             public void run() {
                 ArchiveController.setProgress(source.getName());
-                RarArchiverController.unrar(source, target);
-                ArchiveController.progress();
+                try {
+                    RarArchiverController.unrar(source, target);
+                } catch (IOException | RarException e) {
+                    e.printStackTrace();
+                } finally {
+                    ArchiveController.progress();
+                }
             }
         });
     }
@@ -69,8 +106,13 @@ public class ArchiveMaster {
             @Override
             public void run() {
                 ArchiveController.setProgress(source.getName());
-                TarArchiverController.untar(source, target);
-                ArchiveController.progress();
+                try {
+                    TarArchiverController.untar(source, target);
+                } catch (IOException | PGPException e) {
+                    e.printStackTrace();
+                } finally {
+                    ArchiveController.progress();
+                }
             }
         });
     }

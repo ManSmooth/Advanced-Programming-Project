@@ -18,6 +18,7 @@ public class DragDropScene extends GridPane {
     }
 
     public void start() {
+        this.getStyleClass().add("container");
         DragDropBox ddp = new DragDropBox();
         confirmedFiles();
         ddp.setOnDragOver(MainController::onDragOverHitBox);

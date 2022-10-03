@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import se233.project1.Launcher;
 import se233.project1.controller.ArchiveController;
+import se233.project1.controller.MainController;
 import se233.project1.model.ArchiveTypeWrapper;
 import se233.project1.model.PlatformFont;
 
@@ -34,6 +35,7 @@ public class ArchiverScene extends GridPane {
     public void start() {
         this.setAlignment(Pos.TOP_CENTER);
         this.setPadding(new Insets(10, 10, 10, 10));
+        this.getStyleClass().add("container");
         refresh();
     }
 
@@ -41,25 +43,32 @@ public class ArchiverScene extends GridPane {
         this.getChildren().clear();
         VBox container = new VBox();
         HBox hbox = new HBox();
-        hbox.setSpacing(12);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setSpacing(10);
+        hbox.getStyleClass().add("hcontainer");
+        hbox.setMinWidth(640);
+        hbox.setPadding(new Insets(10, 0, 10, 0));
         container.setSpacing(12);
         ArchiveController.getArchiveList().forEach(o -> {
             Image img = new Image(Launcher.class.getResourceAsStream(o.getIconPath()));
             ImageView icon = new ImageView(img);
             Button b = new Button();
-            icon.setFitHeight(100);
+            icon.setPreserveRatio(true);
             icon.setFitWidth(100);
+            icon.setFitHeight(USE_COMPUTED_SIZE);
+            b.getStyleClass().remove("button");
             if (o.getType() == ArchiveController.getActive()) {
                 b.setBackground(
-                        new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.2), CORNER, Insets.EMPTY)));
+                        new Background(new BackgroundFill(Color.rgb(129, 103, 151, 0.4), CORNER, Insets.EMPTY)));
             } else {
                 b.setBackground(
                         new Background(new BackgroundFill(Color.TRANSPARENT, CORNER, Insets.EMPTY)));
                 b.setOnMouseEntered(e -> b.setBackground(
-                        new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.1), CORNER, Insets.EMPTY))));
+                        new Background(new BackgroundFill(Color.rgb(129, 103, 151, 0.2), CORNER, Insets.EMPTY))));
                 b.setOnMouseExited(e -> b.setBackground(
                         new Background(new BackgroundFill(Color.TRANSPARENT, CORNER, Insets.EMPTY))));
             }
+            b.setPadding(new Insets(10, 10, 10, 10));
             b.setGraphic(icon);
             b.setOnAction(e -> {
                 ArchiveController.setArchiveType(o.getType());
@@ -77,10 +86,18 @@ public class ArchiverScene extends GridPane {
         submit.setPadding(new Insets(5, 5, 5, 5));
         submit.setFont(PlatformFont.getFont("Roboto-Regular", 18));
         submit.setOnAction(e -> ArchiveController.archive(input.getFields()));
+        Button returnButton = new Button("Return");
+        returnButton.setPadding(new Insets(5, 5, 5, 5));
+        returnButton.setFont(PlatformFont.getFont("Roboto-Regular", 18));
+        returnButton.setOnAction(e -> MainController.returnToHome());
+        HBox buttonContainer = new HBox();
+        buttonContainer.setSpacing(10);
+        buttonContainer.setAlignment(Pos.CENTER);
+        buttonContainer.getChildren().addAll(returnButton, submit);
         if (ArchiveController.getActive() == null) {
             submit.setDisable(true);
         }
-        container.getChildren().addAll(hbox, label, input, submit);
+        container.getChildren().addAll(hbox, label, input, buttonContainer);
         container.setAlignment(Pos.CENTER);
         this.add(container, 0, 0);
     }

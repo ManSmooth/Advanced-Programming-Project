@@ -19,6 +19,8 @@ import se233.project1.model.ArchiveTypeWrapper;
 import se233.project1.model.FileWrapper;
 import org.apache.commons.io.FilenameUtils;
 
+import com.jfoenix.controls.JFXDecorator;
+
 public class MainController {
     private static ArrayList<FileWrapper> filesList;
 
@@ -55,10 +57,19 @@ public class MainController {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(Launcher.getPrimaryStage());
         FileConfPane fcp = new FileConfPane();
-        dialog.setOnCloseRequest(e -> filesList.clear());
         dialog.setResizable(false);
-        dialog.setTitle("Confirmation");
-        dialog.setScene(new Scene(fcp));
+        JFXDecorator decorator = new JFXDecorator(dialog, fcp, false, false, false);
+        decorator.setOnCloseButtonAction(new Runnable() {
+            @Override
+            public void run() {
+                filesList.clear();
+                dialog.close();
+            }
+        });
+        decorator.setText(String.format("Confirmation"));
+        Scene scene = new Scene(decorator);
+        scene.getStylesheets().add(Launcher.class.getResource("assets/style.css").toExternalForm());
+        dialog.setScene(scene);
         dialog.show();
     }
 
@@ -72,8 +83,11 @@ public class MainController {
                 dialog.initModality(Modality.APPLICATION_MODAL);
                 dialog.initOwner(Launcher.getPrimaryStage());
                 dialog.setResizable(false);
-                dialog.setTitle(String.format("Password Required: %s", file.getName()));
-                dialog.setScene(new Scene(pp));
+                JFXDecorator decorator = new JFXDecorator(dialog, pp, false, false, false);
+                decorator.setText(String.format("Password Required: %s", file.getName()));
+                Scene scene = new Scene(decorator);
+                scene.getStylesheets().add(Launcher.class.getResource("assets/style.css").toExternalForm());
+                dialog.setScene(scene);
                 dialog.showAndWait();
                 synchronized (cThread) {
                     cThread.notify();

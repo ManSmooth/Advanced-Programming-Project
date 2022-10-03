@@ -19,7 +19,9 @@ public class PasswordPane extends GridPane {
     public PasswordPane() {
         this.setHgap(10);
         this.setVgap(5);
+        this.setPrefWidth(320);
         this.setPadding(new Insets(10, 10, 10, 10));
+        this.getStyleClass().add("container");
         this.start();
     }
 

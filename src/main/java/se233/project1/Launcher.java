@@ -13,7 +13,6 @@ import se233.project1.view.ProgressScene;
 public class Launcher extends Application {
     private static Stage primaryStage;
     private static SceneController sc;
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -26,13 +25,14 @@ public class Launcher extends Application {
         ArchiverScene as = new ArchiverScene();
         ProgressScene ps = new ProgressScene();
         Scene scene = new Scene(dds);
+        scene.getStylesheets().add(this.getClass().getResource("assets/style.css").toExternalForm());
         sc = new SceneController(scene);
         sc.addScene("DragDrop", dds);
         sc.addScene("Archiver", as);
         sc.addScene("Progress", ps);
-        primaryStage.setResizable(false);
-        primaryStage.setTitle("Archiver v0");
+        primaryStage.setResizable(false);;
         primaryStage.setScene(scene);
+        sc.activate("DragDrop");
         primaryStage.show();
     }
 

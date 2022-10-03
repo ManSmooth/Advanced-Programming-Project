@@ -83,7 +83,6 @@ public class ArchiveController {
         }
         setTotalFiles(files.size());
         for (FileWrapper source : files) {
-            System.out.println(source.getName());
             switch (source.getExtension()) {
                 case "zip":
                     ArchiveMaster.unzip(source, target);
