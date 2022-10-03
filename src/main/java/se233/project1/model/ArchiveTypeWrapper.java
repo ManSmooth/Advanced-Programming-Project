@@ -49,6 +49,14 @@ public class ArchiveTypeWrapper {
                 this.description = "RAR Archive";
                 this.extension = "rar";
                 this.canEncrypt = true;
+                ArrayList<Object> rarlist = new ArrayList<>();
+                rarlist.add("0 - Store");
+                rarlist.add("1 - Fastest");
+                rarlist.add("2 - Fast");
+                rarlist.add("3 - Normal (Default)");
+                rarlist.add("4 - Good");
+                rarlist.add("5 - Best");
+                this.options = FXCollections.observableArrayList(rarlist);
                 break;
             case TAR:
                 this.type = ArchiveType.TAR;
@@ -78,6 +86,13 @@ public class ArchiveTypeWrapper {
         return null;
     }
 
+    public static ArrayList<String> getAllExtensions() {
+        ArrayList<String> exts = new ArrayList<>(Arrays.asList(ArchiveType.values()).stream().map((type) -> getWrapper(type).getExtension())
+                .collect(java.util.stream.Collectors.toList()));
+        exts.addAll(TarArchiveMethodMap.getMap().values());
+        exts.add("gpg");
+        return exts;
+    }
     public ArchiveType getType() {
         return type;
     }

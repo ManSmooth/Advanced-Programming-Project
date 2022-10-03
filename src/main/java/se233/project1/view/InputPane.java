@@ -8,6 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import se233.project1.controller.ArchiveController;
 import se233.project1.controller.ArchiveController.ArchiveType;
 import se233.project1.model.ArchiveTypeWrapper;
 import se233.project1.model.PlatformFont;
@@ -32,7 +33,7 @@ public class InputPane extends GridPane {
     }
 
     private void start() {
-        if (this.type != null) {
+        if (this.type != null && ArchiveController.getActive() != null) {
             Label nameLabel = new Label("Archive Name:");
             nameLabel.setFont(PlatformFont.getFont("Roboto-Light", 18));
             name = new TextField();

@@ -45,7 +45,7 @@ public class FileConfPane extends GridPane {
             Node p = (Node) e.getSource();
             Stage s = (Stage) p.getScene().getWindow();
             s.close();
-            MainController.showArchiverScene();
+            MainController.nextScene();
         });
         contButton.setPadding(new Insets(5, 5, 5, 5));
         container.setPadding(new Insets(5, 5, 5, 5));

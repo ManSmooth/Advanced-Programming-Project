@@ -4,6 +4,7 @@ import se233.project1.controller.ArchiveController;
 import se233.project1.controller.MainController;
 import se233.project1.model.FileWrapper;
 import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.AesKeyStrength;
 import net.lingala.zip4j.model.enums.CompressionLevel;
@@ -29,16 +30,30 @@ public class ZipArchiverController {
             ArrayList<FileWrapper> fileList = MainController.getFilesList();
             ArchiveController.setTotalFiles(fileList.size());
             for (FileWrapper fileWrapper : fileList) {
+                ArchiveController.setProgress(fileWrapper.getName());
                 if (fileWrapper.getFile().isFile())
                     zf.addFile(fileWrapper.getFile(), zp);
                 else
                     zf.addFolder(fileWrapper.getFile(), zp);
-                ArchiveController.progress(fileWrapper.getName());
+                ArchiveController.progress();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ArchiveController.returnToHome();
         ArchiveController.time();
+    }
+
+    public static void unzip(FileWrapper source, FileWrapper target) {
+        try {
+            ZipFile zipFile = new ZipFile(source.getFile());
+            if (zipFile.isEncrypted()) {
+                zipFile.setPassword(MainController.showPasswordPane(source).toCharArray());
+            }
+            zipFile.extractAll(target.getPath());
+        } catch (ZipException e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+
     }
 }

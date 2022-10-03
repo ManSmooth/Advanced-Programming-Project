@@ -2,14 +2,15 @@ package se233.project1.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import org.codehaus.plexus.archiver.tar.TarArchiver.TarCompressionMethod;
 import javafx.application.Platform;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import se233.project1.Launcher;
 import se233.project1.model.ArchiveTypeWrapper;
 import se233.project1.model.FileWrapper;
-import se233.project1.view.ArchiverScene;
+import se233.project1.model.TarArchiveMethodMap;
 import se233.project1.view.ProgressScene;
 
 public class ArchiveController {
@@ -30,13 +31,20 @@ public class ArchiveController {
     }
 
     public static void archive(HashMap<String, Object> info) {
+        String ext = ArchiveTypeWrapper.getWrapper(active).getExtension();
+        if (active == ArchiveType.TAR) {
+            ext = TarArchiveMethodMap.getMap().get((TarCompressionMethod) info.get("compression"));
+            if ((Boolean) info.get("encrypted")) {
+                info.replace("name", String.format("%s.%s", ((String) info.get("name")), ext));
+                ext = "gpg";
+            }
+        }
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Destination");
-        fileChooser.setInitialFileName(
-                String.format("%s.%s", info.get("name"), ArchiveTypeWrapper.getWrapper(active).getExtension()));
+        fileChooser.setInitialFileName(String.format("%s.%s", (String) info.get("name"), ext));
         fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Archive Files",
-                        String.format("*.%s", ArchiveTypeWrapper.getWrapper(active).getExtension())));
+                new ExtensionFilter("Archive File",
+                        String.format("*.%s", ext)));
         FileWrapper selectedFile = new FileWrapper(fileChooser.showSaveDialog(Launcher.getPrimaryStage()));
         if (selectedFile.getFile() == null) {
             return;
@@ -51,6 +59,7 @@ public class ArchiveController {
                         ArchiveMaster.sevenZ(selectedFile, info);
                         break;
                     case RAR:
+                        ArchiveMaster.rar(selectedFile, info);
                         break;
                     case TAR:
                         ArchiveMaster.tar(selectedFile, info);
@@ -59,6 +68,42 @@ public class ArchiveController {
                 Thread.currentThread().interrupt();
             }
         }.start();
+        ps = (ProgressScene) Launcher.getSceneController().getScene("Progress");
+        Launcher.getSceneController().activate("Progress");
+    }
+
+    public static void unarchive(ArrayList<FileWrapper> files) {
+        DirectoryChooser fileChooser = new DirectoryChooser();
+        fileChooser.setInitialDirectory(new java.io.File("."));
+        fileChooser.setTitle("Extract to");
+        FileWrapper target = new FileWrapper(fileChooser.showDialog(Launcher.getPrimaryStage()));
+        if (target.getFile() == null) {
+            MainController.returnToHome();
+            return;
+        }
+        setTotalFiles(files.size());
+        for (FileWrapper source : files) {
+            System.out.println(source.getName());
+            switch (source.getExtension()) {
+                case "zip":
+                    ArchiveMaster.unzip(source, target);
+                    break;
+                case "7z":
+                    ArchiveMaster.unsevenZ(source, target);
+                    break;
+                case "rar":
+                    ArchiveMaster.unrar(source, target);
+                    break;
+                case "tar":
+                case "tgz":
+                case "tbz2":
+                case "txz":
+                case "tzst":
+                case "gpg":
+                    ArchiveMaster.untar(source, target);
+                    break;
+            }
+        }
         ps = (ProgressScene) Launcher.getSceneController().getScene("Progress");
         Launcher.getSceneController().activate("Progress");
     }
@@ -81,9 +126,17 @@ public class ArchiveController {
         updateProgress("");
     }
 
-    public static void progress(String name) {
-        finishedFiles++;
+    public static void setProgress(String name) {
         updateProgress(name);
+        System.out.printf("%d/%d, %s\n", finishedFiles, totalFiles, name);
+    }
+
+    public static void progress() {
+        finishedFiles++;
+        if (finishedFiles == totalFiles) {
+            System.out.println("Finished, Returning to home.");
+            MainController.returnToHome();
+        }
     }
 
     public static void updateProgress(String name) {
@@ -103,18 +156,5 @@ public class ArchiveController {
             System.out.printf("Operation Completed, Elapsed: %.4fs\n", (end - start) / 1000000000.0);
             start = 0l;
         }
-    }
-
-    public static void returnToHome() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Launcher.getSceneController().activate("DragDrop");
-                ArchiverScene as = (ArchiverScene) Launcher.getSceneController().getScene("Archiver");
-                as.refresh();
-                MainController.getFilesList().clear();
-                active = null;
-            }
-        });
     }
 }
