@@ -41,6 +41,7 @@ public class ArchiveController {
         }
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Destination");
+        fileChooser.setInitialDirectory(new java.io.File("."));
         fileChooser.setInitialFileName(String.format("%s.%s", (String) info.get("name"), ext));
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("Archive File",
@@ -53,19 +54,18 @@ public class ArchiveController {
             public void run() {
                 switch (active) {
                     case ZIP:
-                        ArchiveMaster.zip(selectedFile, info);
+                        ArchiveDelegate.zip(selectedFile, info);
                         break;
                     case SEVENZIP:
-                        ArchiveMaster.sevenZ(selectedFile, info);
+                        ArchiveDelegate.sevenZ(selectedFile, info);
                         break;
                     case RAR:
-                        ArchiveMaster.rar(selectedFile, info);
+                        ArchiveDelegate.rar(selectedFile, info);
                         break;
                     case TAR:
-                        ArchiveMaster.tar(selectedFile, info);
+                        ArchiveDelegate.tar(selectedFile, info);
                         break;
                 }
-                Thread.currentThread().interrupt();
             }
         }.start();
         ps = (ProgressScene) Launcher.getSceneController().getScene("Progress");
@@ -85,13 +85,13 @@ public class ArchiveController {
         for (FileWrapper source : files) {
             switch (source.getExtension()) {
                 case "zip":
-                    ArchiveMaster.unzip(source, target);
+                    ArchiveDelegate.unzip(source, target);
                     break;
                 case "7z":
-                    ArchiveMaster.unsevenZ(source, target);
+                    ArchiveDelegate.unsevenZ(source, target);
                     break;
                 case "rar":
-                    ArchiveMaster.unrar(source, target);
+                    ArchiveDelegate.unrar(source, target);
                     break;
                 case "tar":
                 case "tgz":
@@ -99,7 +99,7 @@ public class ArchiveController {
                 case "txz":
                 case "tzst":
                 case "gpg":
-                    ArchiveMaster.untar(source, target);
+                    ArchiveDelegate.untar(source, target);
                     break;
             }
         }

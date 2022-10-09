@@ -1,7 +1,7 @@
 package se233.project1.controller.Archiver;
 
 import se233.project1.controller.ArchiveController;
-import se233.project1.controller.ArchiveMaster;
+import se233.project1.controller.ArchiveDelegate;
 import se233.project1.controller.MainController;
 import se233.project1.model.FileWrapper;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
@@ -46,7 +46,7 @@ public class TarArchiverController {
         ta.setCompression((TarCompressionMethod) info.get("compression"));
         ta.setDestFile(target.getFile());
         ArrayList<FileWrapper> fileList = MainController.getFilesList();
-        HashMap<FileWrapper, String> fileMap = ArchiveMaster.flattenFileToHashMap(fileList, "");
+        HashMap<FileWrapper, String> fileMap = ArchiveDelegate.flattenFileToHashMap(fileList, "");
         ArchiveController.setTotalFiles(fileMap.size());
         for (FileWrapper fw : fileMap.keySet()) {
             ArchiveController.setProgress(fw.getName());
@@ -100,7 +100,7 @@ public class TarArchiverController {
             case "tar":
                 break;
             default:
-                System.out.println("Unsupported Format:" + FilenameUtils.getExtension(name));
+                System.out.printf("Unsupported Format: %s\n", FilenameUtils.getExtension(name));
                 return;
         }
         TarArchiveInputStream tais = new TarArchiveInputStream(in);

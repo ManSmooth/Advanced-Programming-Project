@@ -1,7 +1,9 @@
 package se233.project1.controller;
 
 import java.util.ArrayList;
-
+import java.util.Comparator;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -11,7 +13,6 @@ import javafx.stage.Stage;
 import javafx.stage.Modality;
 import se233.project1.Launcher;
 import java.io.File;
-
 import se233.project1.view.ArchiverScene;
 import se233.project1.view.FileConfPane;
 import se233.project1.view.PasswordPane;
@@ -48,6 +49,11 @@ public class MainController {
                 filesList.add(new FileWrapper(file));
             }
         }
+        //remove dupes based on absolute path
+        filesList = filesList.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(FileWrapper::getPath))),
+                        ArrayList::new));
         event.setDropCompleted(success);
         event.consume();
     }

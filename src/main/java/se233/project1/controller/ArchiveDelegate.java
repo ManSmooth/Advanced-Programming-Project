@@ -17,7 +17,7 @@ import com.github.junrar.exception.RarException;
 import java.io.File;
 import java.io.IOException;
 
-public class ArchiveMaster {
+public class ArchiveDelegate {
     private static ForkJoinPool pool = ForkJoinPool.commonPool();
 
     // Delegate Methods

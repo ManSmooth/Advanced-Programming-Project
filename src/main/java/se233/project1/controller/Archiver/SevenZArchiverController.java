@@ -1,7 +1,7 @@
 package se233.project1.controller.Archiver;
 
 import se233.project1.controller.ArchiveController;
-import se233.project1.controller.ArchiveMaster;
+import se233.project1.controller.ArchiveDelegate;
 import se233.project1.controller.MainController;
 import se233.project1.model.FileWrapper;
 
@@ -23,7 +23,7 @@ public class SevenZArchiverController {
     public static void sevenZWithInfo(FileWrapper target, HashMap<String, Object> info) throws IOException {
         archive = new SevenZOutputFile(target.getFile());
         archive.setContentCompression((SevenZMethod) info.get("compression"));
-        HashMap<FileWrapper, String> fileMap = ArchiveMaster.flattenFileToHashMap(MainController.getFilesList(),
+        HashMap<FileWrapper, String> fileMap = ArchiveDelegate.flattenFileToHashMap(MainController.getFilesList(),
                 "");
         ArchiveController.setTotalFiles(fileMap.size());
         for (FileWrapper fw : fileMap.keySet()) {
